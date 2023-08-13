@@ -1,9 +1,12 @@
+using GlobalExceptionHandler.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddTransient<GlobalExceptionHandler.ExceptionConfig.GlobalExceptionHandler>();
 
 var app = builder.Build();
 
@@ -13,7 +16,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseMiddleware<GlobalExceptionHandler.ExceptionConfig.GlobalExceptionHandler>();
 app.UseHttpsRedirection();
 
 var summaries = new[]
@@ -28,7 +31,7 @@ app.MapGet("/weatherforecast", () =>
         (
             DateTime.Now.AddDays(index),
             Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
+            summaries[Random.Shared.Next(summaries.Length+10)]//increased the array length so that exception will be thrown
         ))
         .ToArray();
     return forecast;
@@ -36,8 +39,3 @@ app.MapGet("/weatherforecast", () =>
 .WithName("GetWeatherForecast");
 
 app.Run();
-
-internal record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
