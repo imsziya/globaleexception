@@ -1,5 +1,3 @@
-using GlobalExceptionHandler.Models;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -24,18 +22,10 @@ var summaries = new[]
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
-app.MapGet("/weatherforecast", () =>
+app.MapGet("/error", () =>
 {
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateTime.Now.AddDays(index),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length+10)]//increased the array length so that exception will be thrown
-        ))
-        .ToArray();
-    return forecast;
+    throw new Exception("This is a test exception to demonstrate the global exception handler.");
 })
-.WithName("GetWeatherForecast");
+.WithName("GetError");
 
 app.Run();
